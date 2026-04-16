@@ -87,7 +87,7 @@ function Dashboard() {
 		const currentMinute = currentTime.getMinutes();
 		const currentSecond = currentTime.getSeconds();
 		return `${currentHour}:${currentMinute}:${currentSecond}`;
-	  }
+	}
 
 	function PressureChange() {
 		if (PressureUnit === 'mb') {
