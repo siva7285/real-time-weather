@@ -1,0 +1,315 @@
+.dash-background {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+}
+
+
+.dash-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    border-radius: 2em;
+    height: 80vh;
+    width: 70vw;
+    background-color: rgb(1, 66, 106);
+
+}
+
+
+
+
+
+.dash-left-section {
+    height: 80vh;
+    width: 20vw;
+    border-radius: 1em;
+    background-color: rgb(1, 66, 106);
+}
+
+.dash-right-section {
+
+    /* background-color: rgb(169, 222, 243); */
+    border-radius: 1.4em 0.5em 0.5em 1.4em;
+    height: 79.5vh;
+    width: 80vw;
+    font-size: 2.5vw;
+    font-weight: 600;
+    border: rgba(252, 252, 252, 0.591) solid;
+    background-image: url(../../public/6206160.jpg);
+    background-position: 50% 25%;
+    background-size: 90%;
+
+
+}
+
+
+
+.Other-Weather-Section {
+    /* background-color: greenyellow; */
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+}
+
+.Pressure, .Visibility, .Gust{
+    color: rgb(255, 255, 255);
+    font-size: 1.2vw;
+    background-color: orange;
+    margin-top: 0.5em;
+    padding: 0.5em 1em 0.5em 1em;
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.Pressure:hover, .Visibility:hover, .Gust:hover {
+    transform: scale(105%);
+}
+.unit{
+    background-color: rgb(218, 42, 42);
+    color: white;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+    margin-right: 5%;
+    margin-left: 2%;
+    width: 20%;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+
+}
+
+.unit:hover{
+    border: white 4px solid;
+
+}
+.Time-Section {
+    /* background-color: yellow; */
+    height: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.Time {
+    color: white;
+    font-size: 1.8vw;
+    /* background-color: ORANGE; */
+    display: flex;
+    align-items: center;
+
+    justify-content: center;
+    flex-direction: column;
+    animation: Time-blink 1s linear infinite;
+
+}
+
+.Temperature{
+    color: rgb(255, 255, 255);
+    font-size: 1.8vw;
+    background-color: rgba(250, 209, 5, 0.806);
+    margin-top: 25%;
+    width: 50%;
+
+    align-items: center;
+    justify-content: center;
+    padding: 0.5em 0.1em 0.5em 0.11em;
+    font-weight: bold;
+    cursor: pointer;
+    flex-direction: row;
+    display: flex;
+}
+
+.Temperature:hover {
+    transform: scale(1.1);
+    border: white 2px solid;
+
+}
+
+.feels-like{
+    margin-top: 2%;
+    color: rgb(255, 255, 255);
+    font-size: 0.9vw;
+
+
+
+}
+
+.Location{
+    color: rgb(255, 255, 255);
+    font-size: 1vw;
+    margin-top: 5%;
+    /* background-color: green; */
+}
+
+.Latitude, .Longitude{
+    color: rgb(255, 255, 255);
+    font-size: 1.1vw;
+    /* margin-top: 5%; */
+}
+
+@keyframes Time-blink {
+    0% {
+      opacity: 0;
+
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+
+    }
+  }
+  
+
+
+
+.dash-right-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    /* background-color: red; */
+}
+
+.daily-right-top-section {
+    margin-top: 2%;
+    height: 80vh;
+    width: 100vh;
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    /* align-items: center; */
+    /* background-color: orange; */
+    flex-direction: column;
+}
+
+.VisibNuvIndex-name{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    font-size: 1.5vw;
+    color: white;
+    gap:60%;
+    /* background-color: red; */
+    margin-top: 2%;
+}
+
+.Cloud, .UV {
+    width: 20vw;
+    padding: 1%;
+}
+
+.UserDetails{
+    height: 15h;
+    width: 100%;
+    font-size: 0.35em;
+    color: orange;
+    text-align: right;
+    margin-bottom: 1%;
+
+}
+.Wind {
+    font-size: 2vw;
+    color: rgb(255, 255, 255);
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    height: 8vh;
+    width: 30vw;
+    cursor: pointer;
+    /* flex-direction: column; */
+    background-color: rgba(0, 255, 242, 0.338);
+    display: flex;
+    /* margin-right: 2%; */
+    border: solid white 0.15em;
+    box-shadow: white 2px 2px 12px;
+    border-radius: 1em;
+
+}
+
+ .Wind:hover{
+    transform: scale(1.05);
+    background-color: rgba(203, 144, 18, 0.402);
+ }
+  
+.dash-right-bottom-section {
+    /* background-color: orange; */
+    display: flex;
+    height: 500%;
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 1em;
+
+
+}
+
+.WindGraph {
+    margin-bottom: 10%;
+    width: 15em; 
+    height: 10em; 
+    font-size: 90%;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+}
+
+.chart-label-small {
+    font-size: 1.5vw;
+    border: white solid 0px;
+  }
+
+  .chart-label-small:hover {
+    transform: scale(101%);
+  }
+  
+
+.thermom-section-left {
+    margin-bottom: 5%;
+    margin-left: 10%;
+    height: 70%;
+    width: 1vw;
+    border: solid white 0.1em;
+    border-radius: 1em;
+    display: flex;
+    align-items: flex-end;
+    /* background-color: orange; */
+    /* flex-direction: column; */
+}
+
+.thermom-section-right {
+    margin-bottom: 5%;
+    /* margin-left: 1%; */
+    height: 70%;
+    width: 1vw;
+    border: solid white 0.1em;
+    border-radius: 1em;
+    display: flex;
+    align-items: flex-end;
+
+}
+
+.thermom {
+    background-color: rgb(255, 255, 255);
+    width: 2vw;
+}
+
+.temp-boxes:hover {
+    transform: scale(1.1);
+    border: rgb(0, 119, 255) solid 3px;
+    cursor: pointer;
+
+}
