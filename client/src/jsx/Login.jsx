@@ -21,14 +21,14 @@ function LoginData({ history }) {
 
 
     const data = { 'Username': Username, 'Password': Password };
-    axios.post('http://localhost:5000/loginCredentials', data)
+    axios.post('/loginCredentials', data)
       .then(response => {
 
         console.log(Username, Password)
 
         if (response.data === 'successful') {
 
-          axios.post('http://localhost:5000/activeUsers', data)
+          axios.post('/activeUsers', data)
             .then(response => {
 
               if (response.data === 'added') {

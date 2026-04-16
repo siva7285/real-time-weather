@@ -48,7 +48,7 @@ function Dashboard() {
 	const fetchData = () => {
 		const data = 'Active user details';
 		axios
-			.get('http://localhost:5000/loadDashboard', data)
+			.get('/loadDashboard', data)
 			.then((response) => {
 				console.log(response);
 
