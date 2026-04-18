@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const app = express();
@@ -11,7 +12,12 @@ const { ActiveUsers } = require('./dashboard');
 const { ActiveUserDetails } = require('./activeUser');
 const { FetchAPIdata } = require('./weatherAPI');
 
-app.use(cors());
+// CORS — allows all origins in dev, restrict via CLIENT_ORIGIN in production
+const corsOptions = {
+  origin: process.env.CLIENT_ORIGIN || '*',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // ─── Atlas Connection Test at startup ───────────────────────────────────────
@@ -71,14 +77,14 @@ app.post('/registerCredentials', async (req, res) => {
 
 app.get('/loadDashboard', async (req, res) => {
   try {
-    const result = await ActiveUserDetails();
+    const Username = req.query.Username;
+    const result = await ActiveUserDetails(Username);
     if (!result) {
       return res.status(404).send('No active user found');
     }
     const WeatherData = await FetchAPIdata(result.City);
     const finData = { result, WeatherData };
-    console.log('Sending dashboard data:', result);
-    res.send(finData);
+    res.json(finData);
   } catch (err) {
     console.error('Dashboard route error:', err);
     res.status(500).send('Error loading dashboard');
@@ -105,6 +111,15 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
+// Serve React build in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+  // All remaining routes serve the React app
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+  });
+}
+
 app.listen(port, () => {
-  console.log(`🚀 Server running on http://localhost:${port}`);
+  console.log(`🚀 Server running on http://localhost:${port} [${process.env.NODE_ENV || 'development'}]`);
 });

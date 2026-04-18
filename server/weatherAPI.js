@@ -1,8 +1,7 @@
 const axios = require('axios');
 
-const data = {};
-
 async function FetchAPIdata(city) {
+  const data = {};
   const options = {
     method: 'GET',
     url: 'https://weatherapi-com.p.rapidapi.com/current.json',
@@ -17,8 +16,6 @@ async function FetchAPIdata(city) {
 
   try {
     const response = await axios.request(options);
-
-    console.log(response)
 
     data.Cloud = response.data.current.cloud
     data.Time = response.data.location.localtime

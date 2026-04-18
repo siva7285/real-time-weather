@@ -28,7 +28,7 @@ function Dashboard() {
 	const [Wind, setWind] = useState(0);
 	const [WindDeg, setWindDeg] = useState(270);
 	const [WindDir, setWindDir] = useState('N');
-	const [Humidity, setHumidity] = useState('N');
+	const [Humidity, setHumidity] = useState(0);
 
 
 	useEffect(() => {
@@ -46,30 +46,66 @@ function Dashboard() {
 	}, []);
 
 	const fetchData = () => {
-		const data = 'Active user details';
+		const currentUser = localStorage.getItem('currentUser');
+		const params = currentUser ? { Username: currentUser } : {};
 		axios
-			.get('/loadDashboard', data)
+			.get('/loadDashboard', { params })
 			.then((response) => {
 				console.log(response);
 
-				setName(response.data.result.Name);
-				setEmail(response.data.result.Username);
-				setLocation(response.data.WeatherData.Location);
-				setCloud(response.data.WeatherData.Cloud);
-				setTemp(response.data.WeatherData.Temp);
-				setFeelsLike(response.data.WeatherData.FeelsLike);
-				setGust(response.data.WeatherData.Gust);
-				setLatitude(response.data.WeatherData.Latitude);
-				setLongitude(response.data.WeatherData.Longitude);
-				setPressure(response.data.WeatherData.Pressure);
-				setVisibility(response.data.WeatherData.Visibility);
-				setGust(response.data.WeatherData.Gust);
-				setWind(response.data.WeatherData.Wind);
-				setWindDeg(response.data.WeatherData.WindDeg);
-				setWindDir(response.data.WeatherData.WindDir);
-				setUVIndex(response.data.WeatherData.UV);
-				setTime(response.data.WeatherData.Time);
-				setHumidity(response.data.WeatherData.Humidity)
+				setName(response.data?.result?.Name || 'Unknown');
+				setEmail(response.data?.result?.Username || 'Unknown');
+
+				if (response.data?.WeatherData) {
+					setLocation(response.data.WeatherData.Location || 'Unknown Location');
+					setCloud(response.data.WeatherData.Cloud || 0);
+					
+					setTempUnit(u => {
+						let t = response.data.WeatherData.Temp || 0;
+						setTemp(u === 'F' ? ((t * 9 / 5) + 32).toFixed(1) : t);
+						return u;
+					});
+					
+					setFeelsLikeUnit(u => {
+						let fl = response.data.WeatherData.FeelsLike || 0;
+						setFeelsLike(u === 'F' ? ((fl * 9 / 5) + 32).toFixed(1) : fl);
+						return u;
+					});
+
+					setGustUnit(u => {
+						let g = response.data.WeatherData.Gust || 0;
+						setGust(u === 'kph' ? (g * 1.60934).toFixed(1) : g);
+						return u;
+					});
+
+					setLatitude(response.data.WeatherData.Latitude || 0);
+					setLongitude(response.data.WeatherData.Longitude || 0);
+
+					setPressureUnit(u => {
+						let p = response.data.WeatherData.Pressure || 0;
+						setPressure(u === 'in' ? (p * 0.03937).toFixed(1) : p);
+						return u;
+					});
+
+					setVisibilityUnit(u => {
+						let v = response.data.WeatherData.Visibility || 0;
+						setVisibility(u === 'mile' ? (v * 0.62137119).toFixed(1) : v);
+						return u;
+					});
+
+					setWindUnit(u => {
+						let w = response.data.WeatherData.Wind || 0;
+						setWind(u === 'kph' ? (w * 1.60934).toFixed(1) : w);
+						return u;
+					});
+					setWindDeg(response.data.WeatherData.WindDeg || 0);
+					setWindDir(response.data.WeatherData.WindDir || 'N/A');
+					setUVIndex(response.data.WeatherData.UV || 0);
+					setTime(response.data.WeatherData.Time || 0);
+					setHumidity(response.data.WeatherData.Humidity || 0);
+				} else {
+					setLocation('Location Not Found (Invalid City)');
+				}
 			})
 			.catch((error) => {
 				console.error(error);
@@ -112,20 +148,20 @@ function Dashboard() {
 	function GustChange() {
 		if (GustUnit === 'mph') {
 			setGustUnit('kph');
-			setGust((Gust * 1.609).toFixed(1));
+			setGust((Gust * 1.60934).toFixed(1));
 		} else {
 			setGustUnit('mph');
-			setGust((Gust / 1.609).toFixed(1));
+			setGust((Gust / 1.60934).toFixed(1));
 		}
 	}
 
 	function WindChange() {
 		if (WindUnit === 'mph') {
 			setWindUnit('kph');
-			setWind((Wind * 1.609).toFixed(1));
+			setWind((Wind * 1.60934).toFixed(1));
 		} else {
 			setWindUnit('mph');
-			setWind((Gust / 1.609).toFixed(1));
+			setWind((Wind / 1.60934).toFixed(1));
 		}
 	}
 
@@ -137,7 +173,7 @@ function Dashboard() {
 			setFeelsLike(((FeelsLike * 9) / 5 + 32).toFixed(1));
 		} else {
 			setTempUnit('C');
-			setFeelsLikeUnit('F');
+			setFeelsLikeUnit('C');
 			setTemp((((Temp - 32) * 5) / 9).toFixed(1));
 			setFeelsLike((((FeelsLike - 32) * 5) / 9).toFixed(1));
 		}

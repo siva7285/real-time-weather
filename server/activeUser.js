@@ -3,7 +3,7 @@ const { MongoClient } = require("mongodb");
 
 const url = process.env.MONGODB_URI || "mongodb://localhost:27017/";
 
-async function ActiveUserDetails() {
+async function ActiveUserDetails(Username) {
     const client = new MongoClient(url);
     try {
         await client.connect();
@@ -11,7 +11,12 @@ async function ActiveUserDetails() {
         const db = client.db('WeatherSenseDB');
         const col = db.collection('ActiveUsers');
 
-        const result = await col.find({}).toArray();
+        let query = {};
+        if (Username) {
+            query = { Username: Username };
+        }
+
+        const result = await col.find(query).toArray();
 
         if (result && result.length > 0) {
             const lastUser = result[result.length - 1];

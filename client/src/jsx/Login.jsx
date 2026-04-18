@@ -39,7 +39,7 @@ function LoginData({ history }) {
               console.error(error);
             });
 
-
+          localStorage.setItem('currentUser', Username);
           history.push("/dashboard"); // Replace "/a" with the desired redirect URL
 
 
