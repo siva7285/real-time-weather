@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import "../css/dashboard.css";
 import axios from 'axios';
 import WindGraph from './Radialbar';
@@ -31,6 +31,14 @@ function Dashboard() {
 	const [Humidity, setHumidity] = useState(0);
 	const [DisplayTime, setDisplayTime] = useState('');
 
+	// Refs to always read current unit value synchronously inside async fetchData
+	const tempUnitRef = useRef('C');
+	const feelsLikeUnitRef = useRef('C');
+	const windUnitRef = useRef('mph');
+	const gustUnitRef = useRef('mph');
+	const pressureUnitRef = useRef('mb');
+	const visibilityUnitRef = useRef('km');
+
 
 	useEffect(() => {
 		fetchData();
@@ -45,6 +53,7 @@ function Dashboard() {
 			clearInterval(interval);
 			clearInterval(timeInterval);
 		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const fetchData = () => {
@@ -53,64 +62,67 @@ function Dashboard() {
 		axios
 			.get('/loadDashboard', { params })
 			.then((response) => {
-				console.log(response);
+				const d = response.data;
+				const wd = d?.WeatherData;
 
-				setName(response.data?.result?.Name || 'Unknown');
-				setEmail(response.data?.result?.Username || 'Unknown');
+				// User details
+				setName(d?.result?.Name ?? 'Unknown');
+				setEmail(d?.result?.Username ?? 'Unknown');
 
-				if (response.data?.WeatherData) {
-					setLocation(response.data.WeatherData.Location || 'Unknown Location');
-					setCloud(response.data.WeatherData.Cloud || 0);
-					
-					setTempUnit(u => {
-						let t = response.data.WeatherData.Temp || 0;
-						setTemp(u === 'F' ? ((t * 9 / 5) + 32).toFixed(1) : t);
-						return u;
-					});
-					
-					setFeelsLikeUnit(u => {
-						let fl = response.data.WeatherData.FeelsLike || 0;
-						setFeelsLike(u === 'F' ? ((fl * 9 / 5) + 32).toFixed(1) : fl);
-						return u;
-					});
-
-					setGustUnit(u => {
-						let g = response.data.WeatherData.Gust || 0;
-						setGust(u === 'kph' ? (g * 1.60934).toFixed(1) : g);
-						return u;
-					});
-
-					setLatitude(response.data.WeatherData.Latitude || 0);
-					setLongitude(response.data.WeatherData.Longitude || 0);
-
-					setPressureUnit(u => {
-						let p = response.data.WeatherData.Pressure || 0;
-						setPressure(u === 'in' ? (p * 0.03937).toFixed(1) : p);
-						return u;
-					});
-
-					setVisibilityUnit(u => {
-						let v = response.data.WeatherData.Visibility || 0;
-						setVisibility(u === 'mile' ? (v * 0.62137119).toFixed(1) : v);
-						return u;
-					});
-
-					setWindUnit(u => {
-						let w = response.data.WeatherData.Wind || 0;
-						setWind(u === 'kph' ? (w * 1.60934).toFixed(1) : w);
-						return u;
-					});
-					setWindDeg(response.data.WeatherData.WindDeg || 0);
-					setWindDir(response.data.WeatherData.WindDir || 'N/A');
-					setUVIndex(response.data.WeatherData.UV || 0);
-					setTime(response.data.WeatherData.Time || 0);
-					setHumidity(response.data.WeatherData.Humidity || 0);
-				} else {
+				if (!wd) {
 					setLocation('Location Not Found (Invalid City)');
+					return;
 				}
+
+				// Location
+				setLocation(wd.Location ?? 'Unknown Location');
+
+				// Cloud cover (0-100 integer, valid at 0)
+				setCloud(wd.Cloud ?? 0);
+
+				// Temperature — convert from Celsius based on current selected unit
+				const rawTemp = wd.Temp ?? 0;
+				setTemp(tempUnitRef.current === 'F' ? +((rawTemp * 9 / 5) + 32).toFixed(1) : rawTemp);
+
+				// Feels like — same conversion
+				const rawFeels = wd.FeelsLike ?? 0;
+				setFeelsLike(feelsLikeUnitRef.current === 'F' ? +((rawFeels * 9 / 5) + 32).toFixed(1) : rawFeels);
+
+				// Gust — convert from mph based on current selected unit
+				const rawGust = wd.Gust ?? 0;
+				setGust(gustUnitRef.current === 'kph' ? +(rawGust * 1.60934).toFixed(1) : rawGust);
+
+				// Coordinates
+				setLatitude(wd.Latitude ?? 0);
+				setLongitude(wd.Longitude ?? 0);
+
+				// Pressure — convert from mb based on current selected unit
+				const rawPressure = wd.Pressure ?? 0;
+				setPressure(pressureUnitRef.current === 'in' ? +(rawPressure * 0.03937).toFixed(1) : rawPressure);
+
+				// Visibility — convert from km based on current selected unit
+				const rawVis = wd.Visibility ?? 0;
+				setVisibility(visibilityUnitRef.current === 'mile' ? +(rawVis * 0.62137119).toFixed(1) : rawVis);
+
+				// Wind speed — convert from mph based on current selected unit
+				const rawWind = wd.Wind ?? 0;
+				setWind(windUnitRef.current === 'kph' ? +(rawWind * 1.60934).toFixed(1) : rawWind);
+
+				// Wind direction
+				setWindDeg(wd.WindDeg ?? 0);
+				setWindDir(wd.WindDir ?? 'N/A');
+
+				// UV Index (0-11 scale)
+				setUVIndex(wd.UV ?? 0);
+
+				// Location local time from API
+				setTime(wd.Time ?? '');
+
+				// Humidity (0-100 integer %)
+				setHumidity(wd.Humidity ?? 0);
 			})
 			.catch((error) => {
-				console.error(error);
+				console.error('Dashboard fetch error:', error);
 			});
 	};
 
@@ -129,55 +141,67 @@ function Dashboard() {
 
 	function PressureChange() {
 		if (PressureUnit === 'mb') {
+			pressureUnitRef.current = 'in';
 			setPressureUnit('in');
-			setPressure((Pressure * 0.03937).toFixed(1));
+			setPressure(+(Pressure * 0.03937).toFixed(1));
 		} else {
+			pressureUnitRef.current = 'mb';
 			setPressureUnit('mb');
-			setPressure((Pressure / 0.03937).toFixed(1));
+			setPressure(+(Pressure / 0.03937).toFixed(1));
 		}
 	}
 
 	function VisibilityChange() {
 		if (VisibilityUnit === 'km') {
+			visibilityUnitRef.current = 'mile';
 			setVisibilityUnit('mile');
-			setVisibility((Visibility * 0.62137119).toFixed(1));
+			setVisibility(+(Visibility * 0.62137119).toFixed(1));
 		} else {
+			visibilityUnitRef.current = 'km';
 			setVisibilityUnit('km');
-			setVisibility((Visibility / 0.62137119).toFixed(1));
+			setVisibility(+(Visibility / 0.62137119).toFixed(1));
 		}
 	}
 
 	function GustChange() {
 		if (GustUnit === 'mph') {
+			gustUnitRef.current = 'kph';
 			setGustUnit('kph');
-			setGust((Gust * 1.60934).toFixed(1));
+			setGust(+(Gust * 1.60934).toFixed(1));
 		} else {
+			gustUnitRef.current = 'mph';
 			setGustUnit('mph');
-			setGust((Gust / 1.60934).toFixed(1));
+			setGust(+(Gust / 1.60934).toFixed(1));
 		}
 	}
 
 	function WindChange() {
 		if (WindUnit === 'mph') {
+			windUnitRef.current = 'kph';
 			setWindUnit('kph');
-			setWind((Wind * 1.60934).toFixed(1));
+			setWind(+(Wind * 1.60934).toFixed(1));
 		} else {
+			windUnitRef.current = 'mph';
 			setWindUnit('mph');
-			setWind((Wind / 1.60934).toFixed(1));
+			setWind(+(Wind / 1.60934).toFixed(1));
 		}
 	}
 
 	function changeTempUnit() {
 		if (TempUnit === 'C') {
+			tempUnitRef.current = 'F';
+			feelsLikeUnitRef.current = 'F';
 			setTempUnit('F');
 			setFeelsLikeUnit('F');
-			setTemp(((Temp * 9) / 5 + 32).toFixed(1));
-			setFeelsLike(((FeelsLike * 9) / 5 + 32).toFixed(1));
+			setTemp(+((Temp * 9) / 5 + 32).toFixed(1));
+			setFeelsLike(+((FeelsLike * 9) / 5 + 32).toFixed(1));
 		} else {
+			tempUnitRef.current = 'C';
+			feelsLikeUnitRef.current = 'C';
 			setTempUnit('C');
 			setFeelsLikeUnit('C');
-			setTemp((((Temp - 32) * 5) / 9).toFixed(1));
-			setFeelsLike((((FeelsLike - 32) * 5) / 9).toFixed(1));
+			setTemp(+(((Temp - 32) * 5) / 9).toFixed(1));
+			setFeelsLike(+(((FeelsLike - 32) * 5) / 9).toFixed(1));
 		}
 	}
 

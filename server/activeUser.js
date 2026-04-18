@@ -11,16 +11,12 @@ async function ActiveUserDetails(Username) {
         const db = client.db('WeatherSenseDB');
         const col = db.collection('ActiveUsers');
 
-        let query = {};
-        if (Username) {
-            query = { Username: Username };
-        }
+        // Always query by Username when available; sort by _id desc to get most recent login
+        const query = Username ? { Username: Username } : {};
+        const lastUser = await col.findOne(query, { sort: { _id: -1 } });
 
-        const result = await col.find(query).toArray();
-
-        if (result && result.length > 0) {
-            const lastUser = result[result.length - 1];
-            const { _id, ...userData } = lastUser; // remove _id safely
+        if (lastUser) {
+            const { _id, ...userData } = lastUser;
             return userData;
         } else {
             return null;
