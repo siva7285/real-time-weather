@@ -29,19 +29,21 @@ function Dashboard() {
 	const [WindDeg, setWindDeg] = useState(270);
 	const [WindDir, setWindDir] = useState('N');
 	const [Humidity, setHumidity] = useState(0);
+	const [DisplayTime, setDisplayTime] = useState('');
 
 
 	useEffect(() => {
-		fetchData(); // Fetch initial data
-		const interval = setInterval(fetchData, 60000); // Fetch data every minute
+		fetchData();
+		const interval = setInterval(fetchData, 60000);
+		// Clock ticks every second — stored in DisplayTime, separate from API Time
 		const timeInterval = setInterval(() => {
-			setTime(getCurrentTime());
+			setDisplayTime(getCurrentTime());
 		}, 1000);
+		setDisplayTime(getCurrentTime()); // set immediately on mount
 
 		return () => {
-			clearInterval(interval); // Clean up the interval on component unmount
+			clearInterval(interval);
 			clearInterval(timeInterval);
-
 		};
 	}, []);
 
@@ -113,16 +115,16 @@ function Dashboard() {
 	};
 
 	const currentTime = new Date();
-	const currentHour = currentTime.getHours();
-	const currentMinute = currentTime.getMinutes();
-	const currentSecond = currentTime.getSeconds();
+	const currentHour = String(currentTime.getHours()).padStart(2, '0');
+	const currentMinute = String(currentTime.getMinutes()).padStart(2, '0');
+	const currentSecond = String(currentTime.getSeconds()).padStart(2, '0');
 
 	function getCurrentTime() {
-		const currentTime = new Date();
-		const currentHour = currentTime.getHours();
-		const currentMinute = currentTime.getMinutes();
-		const currentSecond = currentTime.getSeconds();
-		return `${currentHour}:${currentMinute}:${currentSecond}`;
+		const t = new Date();
+		const h = String(t.getHours()).padStart(2, '0');
+		const m = String(t.getMinutes()).padStart(2, '0');
+		const s = String(t.getSeconds()).padStart(2, '0');
+		return `${h}:${m}:${s}`;
 	}
 
 	function PressureChange() {
@@ -187,8 +189,7 @@ function Dashboard() {
 						<div className="Time-Section">
 							<div className="Time">
 								<FontAwesomeIcon icon={faClock} size="xl" style={{ color: 'White' }} />
-								{` ${currentHour}:${currentMinute}:${currentSecond}`}
-
+								{` ${DisplayTime}`}
 							</div>
 							<div className="Location">{Location}</div>
 							<br></br>
