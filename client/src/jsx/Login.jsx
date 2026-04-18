@@ -32,18 +32,16 @@ function LoginData({ history }) {
             .then(response => {
 
               if (response.data === 'added') {
-                console.log('client: added to active list')
+                console.log('client: added to active list');
               }
+              localStorage.setItem('currentUser', Username);
+              history.push("/dashboard"); // Redirect only after DB is ready
             })
             .catch(error => {
               console.error(error);
-            });
-
-          localStorage.setItem('currentUser', Username);
-          history.push("/dashboard"); // Replace "/a" with the desired redirect URL
-
-
-        } else {
+              localStorage.setItem('currentUser', Username);
+              history.push("/dashboard"); 
+            });        } else {
           document.getElementById('Loginloader').style.display = 'none';
           document.getElementById('Submit').style.display = 'block';
           document.getElementById('Register').style.display = 'block';
