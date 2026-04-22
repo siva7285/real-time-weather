@@ -87,7 +87,7 @@ npm install
 
 **Backend:** Node, Express 
 
-**Database:** MongoDB
+**Database:** MongoDB Atlas
 
 
 
