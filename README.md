@@ -22,14 +22,6 @@ The backend of this project is built using Express.js and Node.js, serving as a 
 
 For efficient data storage and management, the project utilizes a MongoDB database hosted on MongoDB Atlas. The database consists of two collections: "Active Users" for currently logged-in users and "Registered Users" for storing details of registered users like name, email, password, and city.
 
-![W
-
-
-
-## Authors
-
-
-
 
 ## Installation and Setup
 
@@ -134,11 +126,6 @@ Contributions are always welcome!
 
 If you encounter any bugs or would like to suggest improvements, please open an issue or submit a pull request.
 
-## About Me
-I'm a results-driven full-stack software developer passionate about building innovative solutions using the latest tech stack in an Agile environment. With a focus on optimal functionality, quality, and reliability, I excel at developing robust software systems.
 
-My expertise lies in Python with frameworks like Django and libraries like Pandas, NumPy, OpenCV, Matplotlib, SciKit, and Tkinter . I'm also proficient in C++, JavaScript, Ajax, HTML5/CSS, React & Node.JS and have hands-on experience with blockchain technologies, specifically Solidity and Ethereum .
-
-In addition, I have a great understanding of database management systems such as MongoDB, MySQL, and SQLite . To streamline my work, I employ various tools including PyCharm, Visual Studio Code, JIRA, GitHub, Truffle, Metamask, Ganache, Remix IDE, and the Microsoft Suite.
 
 
