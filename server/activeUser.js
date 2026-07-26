@@ -3,7 +3,7 @@ const { MongoClient } = require("mongodb");
 
 const url = process.env.MONGODB_URI || "mongodb://localhost:27017/";
 
-async function ActiveUserDetails() {
+async function ActiveUserDetails(Username) {
     const client = new MongoClient(url, {
       serverSelectionTimeoutMS: 5000,
       connectTimeoutMS: 5000,
@@ -14,11 +14,12 @@ async function ActiveUserDetails() {
         const db = client.db('WeatherSenseDB');
         const col = db.collection('ActiveUsers');
 
-        const result = await col.find({}).toArray();
+        // Always query by Username when available; sort by _id desc to get most recent login
+        const query = Username ? { Username: Username } : {};
+        const lastUser = await col.findOne(query, { sort: { _id: -1 } });
 
-        if (result && result.length > 0) {
-            const lastUser = result[result.length - 1];
-            const { _id, ...userData } = lastUser; // remove _id safely
+        if (lastUser) {
+            const { _id, ...userData } = lastUser;
             return userData;
         } else {
             return null;

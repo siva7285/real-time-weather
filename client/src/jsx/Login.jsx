@@ -21,29 +21,27 @@ function LoginData({ history }) {
 
 
     const data = { 'Username': Username, 'Password': Password };
-    axios.post('http://localhost:5000/loginCredentials', data)
+    axios.post('/loginCredentials', data)
       .then(response => {
 
         console.log(Username, Password)
 
         if (response.data === 'successful') {
 
-          axios.post('http://localhost:5000/activeUsers', data)
+          axios.post('/activeUsers', data)
             .then(response => {
 
               if (response.data === 'added') {
-                console.log('client: added to active list')
+                console.log('client: added to active list');
               }
+              localStorage.setItem('currentUser', Username);
+              history.push("/dashboard"); // Redirect only after DB is ready
             })
             .catch(error => {
               console.error(error);
-            });
-
-
-          history.push("/dashboard"); // Replace "/a" with the desired redirect URL
-
-
-        } else {
+              localStorage.setItem('currentUser', Username);
+              history.push("/dashboard"); 
+            });        } else {
           document.getElementById('Loginloader').style.display = 'none';
           document.getElementById('Submit').style.display = 'block';
           document.getElementById('Register').style.display = 'block';
