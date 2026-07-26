@@ -43,7 +43,7 @@ npm install
 ```
 
 ```bash
-  npm run dev
+  npm start
 ```
 
 **Client-side Application**
