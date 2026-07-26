@@ -15,24 +15,41 @@ app.use(cors());
 app.use(express.json());
 
 // ─── Atlas Connection Test at startup ───────────────────────────────────────
-async function testConnection() {
+async function testConnection(retries = 3) {
   const url = process.env.MONGODB_URI;
   if (!url) {
     console.error('❌ MONGODB_URI is not set in .env!');
     return;
   }
-  const client = new MongoClient(url);
-  try {
-    await client.connect();
-    await client.db('admin').command({ ping: 1 });
-    console.log('✅ MongoDB Atlas connected successfully!');
-  } catch (err) {
-    console.error('❌ MongoDB Atlas connection FAILED:', err.message);
-    console.error('👉 Fix: Go to cloud.mongodb.com → Network Access → Add IP Address → Allow Access From Anywhere');
-  } finally {
-    await client.close();
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const client = new MongoClient(url, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+    });
+    try {
+      await client.connect();
+      await client.db('admin').command({ ping: 1 });
+      console.log('✅ MongoDB Atlas connected successfully!');
+      return;
+    } catch (err) {
+      console.error(`❌ MongoDB connection attempt ${attempt}/${retries} FAILED:`, err.message);
+      if (attempt === retries) {
+        console.error('👉 Fix: Go to cloud.mongodb.com → Network Access → Add IP Address → Allow Access From Anywhere');
+        console.error('⚠️  Server is running but database is unavailable. API routes will fail.');
+      } else {
+        console.log(`🔄 Retrying in 3 seconds...`);
+        await new Promise(r => setTimeout(r, 3000));
+      }
+    } finally {
+      await client.close();
+    }
   }
 }
+
+// Handle unhandled rejections so server doesn't crash
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+});
 
 testConnection();
 // ────────────────────────────────────────────────────────────────────────────

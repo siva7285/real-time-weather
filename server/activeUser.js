@@ -4,7 +4,10 @@ const { MongoClient } = require("mongodb");
 const url = process.env.MONGODB_URI || "mongodb://localhost:27017/";
 
 async function ActiveUserDetails() {
-    const client = new MongoClient(url);
+    const client = new MongoClient(url, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+    });
     try {
         await client.connect();
 

@@ -57,7 +57,7 @@ npm install
 **Client-side Application**
 
 ```bash
-  cd server
+  cd client
 ```
 
 ```bash
