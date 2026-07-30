@@ -1,3 +1,6 @@
+if (!globalThis.crypto) {
+  globalThis.crypto = require('crypto').webcrypto || require('crypto');
+}
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -31,6 +34,7 @@ async function testConnection(retries = 3) {
     const client = new MongoClient(url, {
       serverSelectionTimeoutMS: 5000,
       connectTimeoutMS: 5000,
+      tlsAllowInvalidCertificates: true,
     });
     try {
       await client.connect();

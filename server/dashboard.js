@@ -1,3 +1,6 @@
+if (!globalThis.crypto) {
+  globalThis.crypto = require('crypto').webcrypto || require('crypto');
+}
 require('dotenv').config();
 const { MongoClient } = require("mongodb");
 
@@ -7,6 +10,7 @@ async function ActiveUsers(Username, Password) {
     const client = new MongoClient(url, {
       serverSelectionTimeoutMS: 5000,
       connectTimeoutMS: 5000,
+      tlsAllowInvalidCertificates: true,
     });
     try {
         await client.connect();
